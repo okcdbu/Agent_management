@@ -17,11 +17,13 @@ def signup(request):
             email = request.POST['email']
             callup_date = request.POST['callupdate']
             discharge_date = request.POST['dischargedate']
-            user = User.objects.create_user(username=username, password=password, email=email,
-                                            callup_date=callup_date, discharge_date=discharge_date)
-            # 로그인 한다
-            auth.login(request, user)
-            return redirect('/')
+            if User.objects.all().filter(username=username).exists():
+                return render(request, 'accounts/signup.html', {'error': 'User is already exists.'})
+            else:
+                user = User.objects.create_user(username=username, password=password, email=email,
+                                                callup_date=callup_date, discharge_date=discharge_date)
+                auth.login(request, user)
+                return redirect('/')
         else:
             return redirect('/')
     # signup으로 GET 요청이 왔을 때, 회원가입 화면을 띄워준다.
