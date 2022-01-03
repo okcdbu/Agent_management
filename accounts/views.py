@@ -62,3 +62,8 @@ def logout(request):
 
     # logout으로 GET 요청이 들어왔을 때, 로그인 화면을 띄워준다.
     return render(request, 'accounts/login.html')
+
+
+# 개인정보제공
+def privacy_policy(request):
+    return render(request, 'accounts/PrivacyPolicy.html')
