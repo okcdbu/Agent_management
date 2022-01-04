@@ -86,13 +86,38 @@
 				    <div class="events-container">
 				    </div>
 				    <div class="dialog" id="dialog">
-				        <h2 class="dialog-header"> Add New Event </h2>
+				        <h2 class="dialog-header"> 휴가 등록 </h2>
 				        <form class="form" id="form">
 				          <div class="form-container" align="center">
-				            <label class="form-label" id="valueFromMyButton" for="name">Event name</label>
-				            <input class="input" type="text" id="name" maxlength="36">
-				            <label class="form-label" id="valueFromMyButton" for="count">Number of people to invite</label>
-				            <input class="input" type="number" id="count" min="0" max="1000000" maxlength="7">
+                            <p><label class="form-label" id="valueFromMyButton" for="type">휴가 종류</label>
+                              <div class="btn-group btn-group-toggle" data-toggle="buttons" id="type">
+                                  <label class="btn btn-outline-secondary active">
+                                      <input type="radio" name="options" id="dayoff" autocomplete="off" checked> 연가
+                                  </label>
+                                  <label class="btn btn-outline-secondary">
+                                      <input type="radio" name="options" id="sickleave" autocomplete="off"> 병가
+                                  </label>
+                                  <label class="btn btn-outline-secondary">
+                                      <input type="radio" name="options" id="special" autocomplete="off"> 특별휴가
+                                  </label>
+                                  <label class="btn btn-outline-secondary">
+                                      <input type="radio" name="options" id="public" autocomplete="off"> 공가
+                                  </label>
+                              </div></p>
+				            <p><label class="form-label" id="valueFromMyButton" for="name">휴가 내용</label>
+				            <input class="input" type="text" id="name" maxlength="36"></p>
+                            <p><label class="form-label" id="valueFromMyButton" for="days">일수</label>
+                              <div class="btn-group btn-group-toggle" data-toggle="buttons" id="days">
+                                  <label class="btn btn-outline-secondary active">
+                                      <input type="radio" name="options" id="dayoff" autocomplete="off" checked> 오전
+                                  </label>
+                                  <label class="btn btn-outline-secondary">
+                                      <input type="radio" name="options" id="sickleave" autocomplete="off"> 오후
+                                  </label>
+                                  <label class="btn btn-outline-secondary">
+                                      <input type="radio" name="options" id="special" autocomplete="off"> 하루
+                                  </label>
+                              </div></p>
 				            <input type="button" value="Cancel" class="button" id="cancel-button">
 				            <input type="button" value="OK" class="button button-white" id="ok-button">
 				          </div>

@@ -181,7 +181,7 @@ function show_events(events, month, day) {
     // If there are no events for this date, notify the user
     if(events.length===0) {
         var event_card = $("<div class='event-card'></div>");
-        var event_name = $("<div class='event-name'>There are no events planned for "+month+" "+day+".</div>");
+        var event_name = $("<div class='event-name'>"+month+" "+day+" 에는 예정된 일정이 없습니다.</div>");
         $(event_card).css({ "border-left": "10px solid #FF1744" });
         $(event_card).append(event_name);
         $(".events-container").append(event_card);
@@ -224,10 +224,10 @@ var event_data = {
     {
         "occasion": " Repeated Test Event ",
         "invited_count": 120,
-        "year": 2020,
-        "month": 5,
+        "year": 2022,
+        "month": 1,
         "day": 10,
-        "cancelled": true
+        "cancelled": false
     },
     {
         "occasion": " Repeated Test Event ",
