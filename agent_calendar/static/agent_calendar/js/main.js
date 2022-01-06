@@ -1,7 +1,5 @@
 (function($) {
-
 	"use strict";
-
 	// Setup the calendar with the current date
 $(document).ready(function(){
     var date = new Date();
@@ -55,9 +53,9 @@ function init_calendar(date) {
                 show_events(events, months[month], day);
             }
             // If this date has any events, style it with .event-date
-            if(events.length!==0) {
+            /*if(events.length!==0) {
                 curr_date.addClass("event-date");
-            }
+            }*/
             // Set onClick handler for clicking a date
             curr_date.click({events: events, month: months[month], day:day}, date_click);
             row.append(curr_date);
@@ -127,33 +125,31 @@ function new_event(event) {
     })
     // empty inputs and hide events
     $("#dialog input[type=text]").val('');
-    $("#dialog input[type=number]").val('');
+
     $(".events-container").hide(250);
     $("#dialog").show(250);
     // Event handler for cancel button
     $("#cancel-button").click(function() {
         $("#name").removeClass("error-input");
-        $("#count").removeClass("error-input");
         $("#dialog").hide(250);
         $(".events-container").show(250);
     });
     // Event handler for ok button
     $("#ok-button").unbind().click({date: event.data.date}, function() {
+        var type = $("#type input:radio:checked").val();
+        var content = $("#content").val().trim();
+        var daytype = $("#days input:radio:checked").val();
+        var username = $("#username").val();
         var date = event.data.date;
-        var name = $("#name").val().trim();
-        var count = parseInt($("#count").val().trim());
         var day = parseInt($(".active-date").html());
         // Basic form validation
-        if(name.length === 0) {
-            $("#name").addClass("error-input");
-        }
-        else if(isNaN(count)) {
-            $("#count").addClass("error-input");
+        if(content.length === 0) {
+            $("#content").addClass("error-input");
         }
         else {
             $("#dialog").hide(250);
             console.log("new event");
-            new_event_json(name, count, date, day);
+            new_event_json(type, content, daytype, username, date, day);
             date.setDate(day);
             init_calendar(date);
         }
@@ -161,10 +157,12 @@ function new_event(event) {
 }
 
 // Adds a json event to event_data
-function new_event_json(name, count, date, day) {
+function new_event_json(type, content, daytype, username, date, day) {
     var event = {
-        "occasion": name,
-        "invited_count": count,
+        "type": type,
+        "daytype": daytype,
+        "content": content,
+        "username": username,
         "year": date.getFullYear(),
         "month": date.getMonth()+1,
         "day": day
@@ -181,7 +179,7 @@ function show_events(events, month, day) {
     // If there are no events for this date, notify the user
     if(events.length===0) {
         var event_card = $("<div class='event-card'></div>");
-        var event_name = $("<div class='event-name'>"+month+" "+day+" 에는 예정된 일정이 없습니다.</div>");
+        var event_name = $("<div class='event-name'>"+month+" "+day+"일 에는 예정된 일정이 없습니다.</div>");
         $(event_card).css({ "border-left": "10px solid #FF1744" });
         $(event_card).append(event_name);
         $(".events-container").append(event_card);
@@ -190,15 +188,15 @@ function show_events(events, month, day) {
         // Go through and add each event as a card to the events container
         for(var i=0; i<events.length; i++) {
             var event_card = $("<div class='event-card'></div>");
-            var event_name = $("<div class='event-name'>"+events[i]["occasion"]+":</div>");
-            var event_count = $("<div class='event-count'>"+events[i]["invited_count"]+" Invited</div>");
-            if(events[i]["cancelled"]===true) {
-                $(event_card).css({
-                    "border-left": "10px solid #FF1744"
-                });
-                event_count = $("<div class='event-cancelled'>Cancelled</div>");
-            }
-            $(event_card).append(event_name).append(event_count);
+            var title = events[i]["username"] + " " + events[i]["daytype"] +" " + events[i]["type"];
+            var event_name = $("<div class='event-name'>"+title+":</div>");
+            // if(events[i]["cancelled"]===true) {
+            //     $(event_card).css({
+            //         "border-left": "10px solid #FF1744"
+            //     });
+            //     event_count = $("<div class='event-cancelled'>Cancelled</div>");
+            // }
+            $(event_card).append(event_name);
             $(".events-container").append(event_card);
         }
     }
@@ -222,104 +220,30 @@ function check_events(day, month, year) {
 var event_data = {
     "events": [
     {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
+        "type": "dayoff",
+        "daytype": "allday",
+        "content": "Example",
+        "username": "sukamura",
         "year": 2022,
         "month": 1,
-        "day": 10,
-        "cancelled": false
+        "day": 2
     },
-    {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10,
-        "cancelled": true
-    },
-        {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10,
-        "cancelled": true
-    },
-    {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10
-    },
-        {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10,
-        "cancelled": true
-    },
-    {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10
-    },
-        {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10,
-        "cancelled": true
-    },
-    {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10
-    },
-        {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10,
-        "cancelled": true
-    },
-    {
-        "occasion": " Repeated Test Event ",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 10
-    },
-    {
-        "occasion": " Test Event",
-        "invited_count": 120,
-        "year": 2020,
-        "month": 5,
-        "day": 11
-    }
     ]
 };
 
 const months = [ 
-    "January", 
-    "February", 
-    "March", 
-    "April", 
-    "May", 
-    "June", 
-    "July", 
-    "August", 
-    "September", 
-    "October", 
-    "November", 
-    "December" 
+    "1월",
+    "2월",
+    "3월",
+    "4월",
+    "5월",
+    "6월",
+    "7월",
+    "8월",
+    "9월",
+    "10월",
+    "11월",
+    "12월"
 ];
 
 })(jQuery);
