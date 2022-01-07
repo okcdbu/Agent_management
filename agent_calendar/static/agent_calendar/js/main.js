@@ -53,9 +53,9 @@ function init_calendar(date) {
                 show_events(events, months[month], day);
             }
             // If this date has any events, style it with .event-date
-            /*if(events.length!==0) {
+            if(events.length!==0) {
                 curr_date.addClass("event-date");
-            }*/
+            }
             // Set onClick handler for clicking a date
             curr_date.click({events: events, month: months[month], day:day}, date_click);
             row.append(curr_date);
@@ -130,7 +130,7 @@ function new_event(event) {
     $("#dialog").show(250);
     // Event handler for cancel button
     $("#cancel-button").click(function() {
-        $("#name").removeClass("error-input");
+        $("#content").removeClass("error-input");
         $("#dialog").hide(250);
         $(".events-container").show(250);
     });
@@ -178,7 +178,7 @@ function show_events(events, month, day) {
     console.log(event_data["events"]);
     // If there are no events for this date, notify the user
     if(events.length===0) {
-        var event_card = $("<div class='event-card'></div>");
+        var event_card = $("<div class='event-card text-center'></div>");
         var event_name = $("<div class='event-name'>"+month+" "+day+"일 에는 예정된 일정이 없습니다.</div>");
         $(event_card).css({ "border-left": "10px solid #FF1744" });
         $(event_card).append(event_name);
@@ -187,9 +187,9 @@ function show_events(events, month, day) {
     else {
         // Go through and add each event as a card to the events container
         for(var i=0; i<events.length; i++) {
-            var event_card = $("<div class='event-card'></div>");
-            var title = events[i]["username"] + " " + events[i]["daytype"] +" " + events[i]["type"];
-            var event_name = $("<div class='event-name'>"+title+":</div>");
+            var event_card = $("<div class='event-card text-center'></div>");
+            var title = events[i]["username"] + " " + printdict[events[i]["daytype"]] + " " + printdict[events[i]["type"]];
+            var event_name = $("<div class='event-name'>"+title+"</div>");
             // if(events[i]["cancelled"]===true) {
             //     $(event_card).css({
             //         "border-left": "10px solid #FF1744"
@@ -245,5 +245,17 @@ const months = [
     "11월",
     "12월"
 ];
+
+const printdict = {
+    'dayoff':'연가',
+    'sickleave':'병가',
+    'special':'공가',
+    'public':'특별휴가',
+    'AM':'오전',
+    'PM':'오후',
+    'allday':'하루',
+}
+
+
 
 })(jQuery);

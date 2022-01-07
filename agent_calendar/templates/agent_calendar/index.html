@@ -14,7 +14,9 @@
 
 	</head>
 	<body>
+    <!-- user data for javascript-->
     <input type="hidden" id="username" value={{ user.username }}>
+    <input type="hidden" id="user_is_authenticated" value={{ user.is_authenticated }}>
 	<section class="ftco-section">
 		<div class="container">
             <div class="row justify-content-end small">
@@ -34,7 +36,7 @@
             </div>
 			<div class="row justify-content-center">
 				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section">오늘의 휴가자: </h2>
+					<h2 class="heading-section">오늘의 당직: </h2>
 				</div>
 			</div>
 			<div class="row">
@@ -80,8 +82,9 @@
 			              <tbody class="tbody">             
 			              </tbody> 
 				          </table>
-				        </div> 
-				        <button class="button" id="add-button">휴가 입력</button>
+				        </div>
+
+				        <button class="button btn" id="add-button"{% if not user.is_authenticated %} onclick="alert('로그인이 필요합니다.');" disabled {% endif %}>휴가 입력</button>
 				      </div>
 				    </div>
 				    <div class="events-container">
@@ -110,13 +113,13 @@
                             <p><label class="form-label" id="valueFromMyButton" for="days">일수</label>
                               <div class="btn-group btn-group-toggle" data-toggle="buttons" id="days">
                                   <label class="btn btn-outline-secondary active">
-                                      <input type="radio" name="options" value="AM" autocomplete="off" checked> 오전
+                                      <input type="radio" name="daystype" value="AM" autocomplete="off" checked> 오전
                                   </label>
                                   <label class="btn btn-outline-secondary">
-                                      <input type="radio" name="options" value="PM" autocomplete="off"> 오후
+                                      <input type="radio" name="daystype" value="PM" autocomplete="off"> 오후
                                   </label>
                                   <label class="btn btn-outline-secondary">
-                                      <input type="radio" name="options" value="allday" autocomplete="off"> 하루
+                                      <input type="radio" name="daystype" value="allday" autocomplete="off"> 하루
                                   </label>
                               </div></p>
 				            <input type="button" value="Cancel" class="button" id="cancel-button">
