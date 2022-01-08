@@ -11,6 +11,8 @@ $(document).ready(function(){
     $("#add-button").click({date: date}, new_event);
     // Set current month as active
     $(".months-row").children().eq(date.getMonth()).addClass("active-month");
+    // Get Data from DB
+    get_dayoff(url_to_Dayoff);
     init_calendar(date);
     var events = check_events(today, date.getMonth()+1, date.getFullYear());
     show_events(events, months[date.getMonth()], today);
@@ -139,7 +141,7 @@ function new_event(event) {
         var type = $("#type input:radio:checked").val();
         var content = $("#content").val().trim();
         var daytype = $("#days input:radio:checked").val();
-        var username = $("#username").val();
+        var username1 = username;
         var date = event.data.date;
         var day = parseInt($(".active-date").html());
         // Basic form validation
@@ -148,8 +150,15 @@ function new_event(event) {
         }
         else {
             $("#dialog").hide(250);
-            console.log("new event");
-            new_event_json(type, content, daytype, username, date, day);
+            console.log("new event",username);
+            new_event_json(type, content, daytype, username1, date);
+            post_dayoff(url_to_Dayoff,{
+                "type": type,
+                "daytype": daytype,
+                "content": content,
+                "username": username1,
+                "date": date
+            });
             date.setDate(day);
             init_calendar(date);
         }
@@ -157,7 +166,7 @@ function new_event(event) {
 }
 
 // Adds a json event to event_data
-function new_event_json(type, content, daytype, username, date, day) {
+function new_event_json(type, content, daytype, username, date) {
     var event = {
         "type": type,
         "daytype": daytype,
@@ -165,7 +174,7 @@ function new_event_json(type, content, daytype, username, date, day) {
         "username": username,
         "year": date.getFullYear(),
         "month": date.getMonth()+1,
-        "day": day
+        "day": date.getDate(),
     };
     event_data["events"].push(event);
 }
@@ -216,6 +225,42 @@ function check_events(day, month, year) {
     return events;
 }
 
+// Get data from backend database, defined in agent_calendar.Dayoff
+function get_dayoff(url) {
+    $.ajax({
+        url: url,
+        dataType: 'json',
+        async: false,
+        success: function (data) {
+            console.log(data)
+            for(var jsondata of data){
+                var date = new Date(jsondata.fields.date)
+                new_event_json(jsondata.fields.type,jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date)
+            }
+        },
+        error: function (request,status,error) {
+            console.log(request)
+        }
+    });
+}
+
+// Post data to backend database, defined in agent_calendar.Dayoff
+function post_dayoff(url,event) {
+    $.ajax({
+       url:url,
+       type:'POST',
+       data: JSON.stringify(event),
+       headers:{
+         'X-CSRFTOKEN' : csrf_token
+       },
+       success: function (event) {
+            console.log(event)
+       },
+       error: function (request,status,error) {
+            console.log(error)
+       }
+    });
+}
 // Given data for events in JSON format
 var event_data = {
     "events": [

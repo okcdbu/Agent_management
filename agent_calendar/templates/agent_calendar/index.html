@@ -15,8 +15,11 @@
 	</head>
 	<body>
     <!-- user data for javascript-->
-    <input type="hidden" id="username" value={{ user.username }}>
-    <input type="hidden" id="user_is_authenticated" value={{ user.is_authenticated }}>
+    <script>
+        var username = '{{ user.username }}';
+        var csrf_token = '{{ csrf_token }}';
+        var url_to_Dayoff = '{% url 'dayoff' %}';
+    </script>
 	<section class="ftco-section">
 		<div class="container">
             <div class="row justify-content-end small">

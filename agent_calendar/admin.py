@@ -1,3 +1,5 @@
 from django.contrib import admin
+from agent_calendar.models import Dayoff
 
-# Register your models here.
+
+admin.site.register(Dayoff)
