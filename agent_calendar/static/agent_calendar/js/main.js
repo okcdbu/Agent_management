@@ -151,23 +151,24 @@ function new_event(event) {
         else {
             $("#dialog").hide(250);
             console.log("new event",username);
+            date.setDate(day);
             new_event_json(type, content, daytype, username1, date);
             post_dayoff(url_to_Dayoff,{
                 "type": type,
                 "daytype": daytype,
                 "content": content,
                 "username": username1,
-                "date": date
+                "date": date.toISOString().substring(0,10),
             });
-            date.setDate(day);
             init_calendar(date);
         }
     });
 }
 
 // Adds a json event to event_data
-function new_event_json(type, content, daytype, username, date) {
+function new_event_json(id, type, content, daytype, username, date) {
     var event = {
+        "id" : id,
         "type": type,
         "daytype": daytype,
         "content": content,
@@ -199,6 +200,15 @@ function show_events(events, month, day) {
             var event_card = $("<div class='event-card text-center'></div>");
             var title = events[i]["username"] + " " + printdict[events[i]["daytype"]] + " " + printdict[events[i]["type"]];
             var event_name = $("<div class='event-name'>"+title+"</div>");
+            $(event_card).data("content",events[i]["content"]);
+            $(document).on("click",".event-card", function () {
+                jQuery.noConflict();
+                var text = $(this).text();
+                var content = "<h5>휴가 내용</h5><p>" + $(this).data("content") + "</p>";
+                $(".modal-title").text(text);
+                $(".modal-body").html(content);
+                $("#modalBox").modal("show")
+            })
             // if(events[i]["cancelled"]===true) {
             //     $(event_card).css({
             //         "border-left": "10px solid #FF1744"
@@ -225,6 +235,15 @@ function check_events(day, month, year) {
     return events;
 }
 
+// Need to modify and add listner to #modify
+function modalchange() {
+
+}
+// Need to modify and add listner to #cancel
+function modaldelete() {
+
+}
+
 // Get data from backend database, defined in agent_calendar.Dayoff
 function get_dayoff(url) {
     $.ajax({
@@ -235,7 +254,8 @@ function get_dayoff(url) {
             console.log(data)
             for(var jsondata of data){
                 var date = new Date(jsondata.fields.date)
-                new_event_json(jsondata.fields.type,jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date)
+                new_event_json(jsondata.pk, jsondata.fields.type,
+                    jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date)
             }
         },
         error: function (request,status,error) {
@@ -261,18 +281,28 @@ function post_dayoff(url,event) {
        }
     });
 }
+
+// Delete data from backend database, defined in agent_calendar.Dayoff
+function delete_dayoff(url,event) {
+    $.ajax({
+       url:url,
+       type:'DELETE',
+       data: JSON.stringify(event),
+       headers:{
+         'X-CSRFTOKEN' : csrf_token
+       },
+       success: function (event) {
+            console.log(event)
+       },
+       error: function (request,status,error) {
+            console.log(error)
+       }
+    });
+}
 // Given data for events in JSON format
 var event_data = {
     "events": [
-    {
-        "type": "dayoff",
-        "daytype": "allday",
-        "content": "Example",
-        "username": "sukamura",
-        "year": 2022,
-        "month": 1,
-        "day": 2
-    },
+
     ]
 };
 
@@ -294,13 +324,11 @@ const months = [
 const printdict = {
     'dayoff':'연가',
     'sickleave':'병가',
-    'special':'공가',
-    'public':'특별휴가',
+    'special':'특별휴가',
+    'public':'공가',
     'AM':'오전',
     'PM':'오후',
     'allday':'하루',
 }
-
-
 
 })(jQuery);

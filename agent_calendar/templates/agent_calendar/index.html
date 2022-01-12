@@ -91,6 +91,7 @@
 				      </div>
 				    </div>
 				    <div class="events-container">
+
 				    </div>
 				    <div class="dialog" id="dialog">
 				        <h2 class="dialog-header"> 휴가 등록 </h2>
@@ -130,6 +131,25 @@
 				          </div>
 				        </form>
 				      </div>
+                    <!-- 모달 영역 -->
+                        <div id="modalBox" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel"></h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    </div>
+                                    <div class="modal-body">
+                                    </div>
+                                    <div class="modal-footer">
+                                        {% if user.is_authenticated %}
+                                        <button type="button" class="btn btn-primary" id="modify">휴가 수정</button>
+                                        <button type="button" class="btn btn-default" id="cancel">휴가 취소</button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 				  </div>
 				</div>
 			</div>
