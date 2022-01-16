@@ -9,6 +9,7 @@ $(document).ready(function(){
     $(".left-button").click({date: date}, prev_year);
     $(".month").click({date: date}, month_click);
     $("#add-button").click({date: date}, new_event);
+
     // Set current month as active
     $(".months-row").children().eq(date.getMonth()).addClass("active-month");
     // Get Data from DB
@@ -16,6 +17,10 @@ $(document).ready(function(){
     init_calendar(date);
     var events = check_events(today, date.getMonth()+1, date.getFullYear());
     show_events(events, months[date.getMonth()], today);
+    // Modal Button settings
+    $("#modify").click(modalchange);
+    $("#cancel").click(modaldelete);
+
 });
 
 // Initialize the calendar by appending the HTML dates
@@ -56,6 +61,7 @@ function init_calendar(date) {
             }
             // If this date has any events, style it with .event-date
             if(events.length!==0) {
+                console.log(events)
                 curr_date.addClass("event-date");
             }
             // Set onClick handler for clicking a date
@@ -127,7 +133,6 @@ function new_event(event) {
     })
     // empty inputs and hide events
     $("#dialog input[type=text]").val('');
-
     $(".events-container").hide(250);
     $("#dialog").show(250);
     // Event handler for cancel button
@@ -152,7 +157,6 @@ function new_event(event) {
             $("#dialog").hide(250);
             console.log("new event",username);
             date.setDate(day);
-            new_event_json(type, content, daytype, username1, date);
             post_dayoff(url_to_Dayoff,{
                 "type": type,
                 "daytype": daytype,
@@ -166,7 +170,7 @@ function new_event(event) {
 }
 
 // Adds a json event to event_data
-function new_event_json(id, type, content, daytype, username, date) {
+function new_event_json(id, type, content, daytype, username, date, cancelled = false) {
     var event = {
         "id" : id,
         "type": type,
@@ -176,6 +180,7 @@ function new_event_json(id, type, content, daytype, username, date) {
         "year": date.getFullYear(),
         "month": date.getMonth()+1,
         "day": date.getDate(),
+        "cancelled" : cancelled,
     };
     event_data["events"].push(event);
 }
@@ -185,7 +190,6 @@ function show_events(events, month, day) {
     // Clear the dates container
     $(".events-container").empty();
     $(".events-container").show(250);
-    console.log(event_data["events"]);
     // If there are no events for this date, notify the user
     if(events.length===0) {
         var event_card = $("<div class='event-card text-center'></div>");
@@ -200,21 +204,24 @@ function show_events(events, month, day) {
             var event_card = $("<div class='event-card text-center'></div>");
             var title = events[i]["username"] + " " + printdict[events[i]["daytype"]] + " " + printdict[events[i]["type"]];
             var event_name = $("<div class='event-name'>"+title+"</div>");
-            $(event_card).data("content",events[i]["content"]);
+            $(event_card).data("data",events[i]);
             $(document).on("click",".event-card", function () {
                 jQuery.noConflict();
                 var text = $(this).text();
-                var content = "<h5>휴가 내용</h5><p>" + $(this).data("content") + "</p>";
+                var content = "<h5>휴가 내용</h5><p>" + $(this).data("data")['content'] + "</p>";
+                $(".modal-content").data("event", $(this).data("data"))
                 $(".modal-title").text(text);
                 $(".modal-body").html(content);
+                modalfooterDisplay(username);
                 $("#modalBox").modal("show")
             })
-            // if(events[i]["cancelled"]===true) {
-            //     $(event_card).css({
-            //         "border-left": "10px solid #FF1744"
-            //     });
-            //     event_count = $("<div class='event-cancelled'>Cancelled</div>");
-            // }
+            if(events[i]["cancelled"]===true) {
+                $(event_card).css({
+                    "border-left": "10px solid #FF1744"
+                });
+                var event_cancelled = $("<div class='event-cancelled'>Cancelled</div>");
+                $(event_name).append(event_cancelled)
+            }
             $(event_card).append(event_name);
             $(".events-container").append(event_card);
         }
@@ -235,13 +242,74 @@ function check_events(day, month, year) {
     return events;
 }
 
-// Need to modify and add listner to #modify
+// Need to modify and add listener to #modify
 function modalchange() {
+    var data = $(".modal-content").data("event");
+    //console.log(data)
+    $('#modalBox').modal('hide');
+    $(".events-container").hide(250);
+    $("#dialog").show(250);
+    $("#dialog input[type=text]").val(data["content"]);
+
+    // Event handler for ok button
+    $("#ok-button").unbind().click({event: data}, function(event) {
+        var type = $("#type input:radio:checked").val();
+        var content = $("#content").val().trim();
+        var daytype = $("#days input:radio:checked").val();
+        //console.log(event.data.event)
+        var date = new Date(event.data.event['year'],event.data.event['month'] - 1,event.data.event['day'])
+        var id = event.data.event["id"];
+        // Basic form validation
+        if(content.length === 0) {
+            $("#content").addClass("error-input");
+        }
+        else {
+            $("#dialog").hide(250);
+            console.log("change event",date);
+            put_dayoff(url_to_Dayoff,{
+                "id" : id,
+                "type": type,
+                "daytype": daytype,
+                "content": content,
+            });
+            init_calendar(date);
+        }
+    });
+}
+// Need to modify and add listener to #cancel
+function modaldelete() {
+    var data = $(".modal-content").data("event");
+    $('#modalBox').modal('hide');
+    //console.log(data)
+    if(confirm('정말 취소하겠습니까?')){
+        delete_dayoff(url_to_Dayoff,{
+            "id" : data['id']
+        });
+        var today = new Date(data['year'],data['month']-1,data['day']);
+        console.log(today)
+        init_calendar(today)
+    }
+    else return false;
 
 }
-// Need to modify and add listner to #cancel
-function modaldelete() {
 
+// Modal Button Display settings
+function modalfooterDisplay(curuser) {
+    var event_owner = $(".modal-content").data("event")['username']
+    if(curuser === event_owner){
+        $("#modify").show()
+        $("#cancel").show()
+        if($(".modal-content").data("event")['cancelled']){
+            $("#cancel").prop("disabled",true);
+        }
+        else{
+            $("#cancel").prop("disabled",false);
+        }
+    }
+    else{
+        $("#modify").hide()
+        $("#cancel").hide()
+    }
 }
 
 // Get data from backend database, defined in agent_calendar.Dayoff
@@ -254,8 +322,15 @@ function get_dayoff(url) {
             console.log(data)
             for(var jsondata of data){
                 var date = new Date(jsondata.fields.date)
-                new_event_json(jsondata.pk, jsondata.fields.type,
+                if(jsondata.fields.cancelled){
+                    new_event_json(jsondata.pk, jsondata.fields.type,
+                    jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date,jsondata.fields.cancelled)
+                }
+                else{
+                    new_event_json(jsondata.pk, jsondata.fields.type,
                     jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date)
+                }
+
             }
         },
         error: function (request,status,error) {
@@ -270,11 +345,17 @@ function post_dayoff(url,event) {
        url:url,
        type:'POST',
        data: JSON.stringify(event),
+       async : false,
        headers:{
          'X-CSRFTOKEN' : csrf_token
        },
-       success: function (event) {
-            console.log(event)
+       success: function (data) {
+            console.log(data)
+            for(var jsondata of data){
+                var date = new Date(jsondata.fields.date)
+                new_event_json(jsondata.pk, jsondata.fields.type,
+                    jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date)
+            }
        },
        error: function (request,status,error) {
             console.log(error)
@@ -282,17 +363,41 @@ function post_dayoff(url,event) {
     });
 }
 
+// Update data from backend database, defined in agent_calendar.Dayoff
+function put_dayoff(url,event) {
+    $.ajax({
+       url:url,
+       type:'PUT',
+       data: JSON.stringify(event),
+       async:false,
+       headers:{
+         'X-CSRFTOKEN' : csrf_token
+       },
+       success: function (data) {
+            console.log(event)
+           var idx = event_data['events'].findIndex((eventdata) => eventdata.id === event.id )
+           event_data['events'][idx].type = event.type;
+           event_data['events'][idx].daytype = event.daytype;
+           event_data['events'][idx].content = event.content;
+       },
+       error: function (request,status,error) {
+            console.log(error)
+       }
+    });
+}
 // Delete data from backend database, defined in agent_calendar.Dayoff
 function delete_dayoff(url,event) {
     $.ajax({
        url:url,
        type:'DELETE',
        data: JSON.stringify(event),
+       async:false,
        headers:{
          'X-CSRFTOKEN' : csrf_token
        },
-       success: function (event) {
-            console.log(event)
+       success: function () {
+           var idx = event_data['events'].findIndex((eventdata) => eventdata.id === event.id )
+           event_data['events'][idx].cancelled = true;
        },
        error: function (request,status,error) {
             console.log(error)
