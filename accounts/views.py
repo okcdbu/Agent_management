@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
-from accounts.models import User
 from django.contrib import auth
-
+from accounts.models import User
 
 # Create your views here.
 
@@ -69,3 +68,4 @@ def logout(request):
 # 개인정보제공
 def privacy_policy(request):
     return render(request, 'accounts/PrivacyPolicy.html')
+

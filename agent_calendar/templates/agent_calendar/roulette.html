@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src={% static "/agent_calendar/js/Winwheel.js" %}></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
+	<link rel="stylesheet" href={% static '/agent_calendar/css/style.css' %}>
+    <title>Title</title>
+</head>
+<body>
+    <script>
+        var segment_init = [];
+    </script>
+    <div id="container" class="container">
+        <div class="row justify-content-center">
+            <div class="col-6 justify-content-center" id="canvas-container">
+                <canvas id="canvas" width="400" height="400">
+                    당신의 브라우저가 이 기능을 지원하지 않습니다.
+                </canvas>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-5 justify-content-center">
+                <button class="btn button" id="startbtn">돌리기</button>
+                <button class="btn button" id="resetbtn">리셋</button>
+            </div>
+        </div>
+        <div class="row justify-content-end">
+            <div class="col-4">
+                <ul class="list-group">
+                    {% for name, isvalid in users.items %}
+                        {% if isvalid %}
+                        <li class="list-group-item">
+                            <input class="form-check-input me-1" onclick="onCheck(this)" type="checkbox" value="{{ name }}"checked>
+                            {{ name }}
+                        </li>
+                        <script>
+                            segment_init.push({ name : '{{ name }}'});
+                        </script>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+<script src={% static "/agent_calendar/js/jquery.min.js" %}></script>
+  <script src={% static "/agent_calendar/js/popper.js" %}></script>
+  <script src={% static "/agent_calendar/js/bootstrap.min.js" %}></script>
+<script src={% static "/agent_calendar/js/roulette.js" %}></script>
+</body>
+</html>

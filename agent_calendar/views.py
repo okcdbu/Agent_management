@@ -4,6 +4,7 @@ from accounts.models import User
 from django.core import serializers
 from django.http import HttpResponse
 from django.views import View
+from datetime import date
 import json
 
 
@@ -12,6 +13,19 @@ import json
 
 def index(request):
     return render(request, 'agent_calendar/index.html')
+
+
+def roulette(request):
+    users = User.objects.all().values('username')
+    dayoffusers = Dayoff.objects.filter(date=date.today(), cancelled=False).exclude(daytype='PM').values(
+        'username__username')
+    data = dict()
+    for user in users:
+        data[user['username']] = True
+        for dayoffuser in dayoffusers:
+            if data[user['username']] == dayoffuser['username__username']:
+                data[user] = False
+    return render(request, 'agent_calendar/roulette.html', context={'users': data})
 
 
 class DayoffView(View):

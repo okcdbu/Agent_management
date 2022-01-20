@@ -4388,6 +4388,7 @@ input[type="button"].btn-block {
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
+  background-color: #f8f9fd;
   padding-left: 0;
   margin-bottom: 0; }
 
@@ -4409,8 +4410,8 @@ input[type="button"].btn-block {
   display: block;
   padding: 0.75rem 1.25rem;
   margin-bottom: -1px;
-  background-color: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.125); }
+  background-color: #f8f9fd;
+  border: 3px solid #efd5f7; }
   .list-group-item:first-child {
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem; }
@@ -8484,3 +8485,12 @@ h1, h2, h3, h4, h5,
 
 .error-input {
   border-color: #cd4dcc; }
+
+#canvas-container {
+   width: 100%;
+   text-align:center;
+}
+
+canvas {
+   display: inline;
+}
