@@ -14,24 +14,34 @@
 <body>
     <script>
         var segment_init = [];
+        var type = '{{ type }}';
+        var csrf_token = '{{ csrf_token }}';
     </script>
-    <div id="container" class="container">
+    <section class="ftco-section">
+        <div id="container" class="container">
         <div class="row justify-content-center">
-            <div class="col-6 justify-content-center" id="canvas-container">
+            <div class="col-md-6 text-center">
+                <h2 class="heading-section">안진다는 마인드</h2>
+                <h3 id="type">{{ type }}</h3>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="justify-content-center" style="width: 400px; height: 400px" id="canvas-container">
                 <canvas id="canvas" width="400" height="400">
                     당신의 브라우저가 이 기능을 지원하지 않습니다.
                 </canvas>
             </div>
         </div>
         <div class="row justify-content-center">
-            <div class="col-5 justify-content-center">
+            <div class="col-5 text-center">
                 <button class="btn button" id="startbtn">돌리기</button>
                 <button class="btn button" id="resetbtn">리셋</button>
             </div>
         </div>
         <div class="row justify-content-end">
-            <div class="col-4">
-                <ul class="list-group">
+            <div class="col-4 justify-content-center">
+            <label class="col-form-label-lg justify-content-center" for="listgroup">참여자</label>
+                <ul class="list-group" id="listgroup">
                     {% for name, isvalid in users.items %}
                         {% if isvalid %}
                         <li class="list-group-item">
@@ -47,10 +57,7 @@
             </div>
         </div>
     </div>
-
-
-
-
+    </section>
 
 <script src={% static "/agent_calendar/js/jquery.min.js" %}></script>
   <script src={% static "/agent_calendar/js/popper.js" %}></script>

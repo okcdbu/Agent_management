@@ -39,8 +39,23 @@
             </div>
 			<div class="row justify-content-center">
 				<div class="col-md-6 text-center mb-5">
-					<h2 class="heading-section">오늘의 당직: </h2>
-                    <button type="button" class="btn btn-outline-secondary" id="roulette-anchor" onclick="location.href={% url 'roulette' %};">지금 정하기</button>
+					<h2 class="heading-section">와치복지관 사회복무포털</h2>
+                    <div class="input-group mb-3 justify-content-center">
+                        <form method="get" action="/roulette" id="roulette-form">
+                            <input type="text" name="type" class="form-control" placeholder="룰렛 타입 정하기">
+                        </form>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit" form="roulette-form">룰렛 돌리기</button>
+                        </div>
+                    </div>
+                    <details>
+                        <summary>오늘의 룰렛 결과</summary>
+                        <ul class="list-group">
+                            {% for values in result %}
+                                <li class="list-group-item">오늘의 {{ values.name }} : {{ values.winner }}</li>
+                            {% endfor %}
+                        </ul>
+                    </details>
 				</div>
 			</div>
 			<div class="row">

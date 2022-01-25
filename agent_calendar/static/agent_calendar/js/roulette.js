@@ -15,8 +15,6 @@ let theWheel = new Winwheel({
         'callbackAfter' : 'drawTriangle()'
     }
     });
-
-
 $(document).ready(function () {
     // Button mapping
     // Function to draw pointer using code (like in a previous tutorial).
@@ -29,7 +27,7 @@ $(document).ready(function () {
     theWheel.deleteSegment(1);
     theWheel.draw()
 });
-
+drawTriangle();
 // This function called after the spin animation has stopped.
 function alertPrize()
     {
@@ -37,7 +35,25 @@ function alertPrize()
         let winningSegment = theWheel.getIndicatedSegment();
 
         // Basic alert of the segment text which is the prize name.
-        alert("You have won " + winningSegment.text + "!");
+        alert("오늘의 " + type + "은 " + winningSegment.text + " 입니다!");
+        $.ajax({
+            url: '/roulette/',
+            type:'POST',
+            data: JSON.stringify({
+                'winner' : winningSegment.text,
+                'name' : type
+            }),
+            async : false,
+            headers:{
+                'X-CSRFTOKEN' : csrf_token
+            },
+            success: function (data) {
+                console.log(data)
+            },
+            error: function (request,status,error) {
+                console.log(error)
+            }
+        });
     }
 
  function drawTriangle()
@@ -75,11 +91,17 @@ function alertPrize()
         if(theWheel.segments[idx] === undefined)
             continue;
         if(theWheel.segments[idx].text === value){
+            if(theWheel.numSegments <= 1){
+                theWheel.addSegment({'text' : ''});
+            }
             theWheel.deleteSegment(idx);
             theWheel.draw();
             return;
         }
     }
     theWheel.addSegment({'text' : value});
+    if(theWheel.segments[1].text===''){
+        theWheel.deleteSegment(1);
+    }
     theWheel.draw();
  }

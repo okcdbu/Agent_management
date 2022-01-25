@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Dayoff
+from .models import Dayoff,Roulette
 from accounts.models import User
 from django.core import serializers
 from django.http import HttpResponse
@@ -12,20 +12,35 @@ import json
 
 
 def index(request):
-    return render(request, 'agent_calendar/index.html')
+    result = Roulette.objects.filter(date=date.today())
+    isduty = False
+    duty = ''
+    if result.filter(name='당직').first():
+        isduty = True
+        duty = result.filter(name='당직').first().winner.username
+    return render(request, 'agent_calendar/index.html', context={'result': result, 'isduty': isduty, 'duty': duty})
 
 
 def roulette(request):
-    users = User.objects.all().values('username')
-    dayoffusers = Dayoff.objects.filter(date=date.today(), cancelled=False).exclude(daytype='PM').values(
-        'username__username')
-    data = dict()
-    for user in users:
-        data[user['username']] = True
-        for dayoffuser in dayoffusers:
-            if data[user['username']] == dayoffuser['username__username']:
-                data[user] = False
-    return render(request, 'agent_calendar/roulette.html', context={'users': data})
+    if request.method == 'GET':
+        roulettetype = request.GET.get('type', '')
+        users = User.objects.all().values('username')
+        dayoffusers = Dayoff.objects.filter(date=date.today(), cancelled=False).exclude(daytype='PM').values(
+            'username__username')
+        data = dict()
+        for user in users:
+            data[user['username']] = True
+            for dayoffuser in dayoffusers:
+                if data[user['username']] == dayoffuser['username__username']:
+                    data[user] = False
+        return render(request, 'agent_calendar/roulette.html', context={'users': data, 'type': roulettetype})
+    else:
+        newdata = json.loads(request.body)
+        winner = User.objects.get_by_natural_key(newdata['winner'])
+        result = Roulette(name=newdata['name'],
+                          winner=winner)
+        result.save()
+        return HttpResponse(status=200)
 
 
 class DayoffView(View):

@@ -61,7 +61,7 @@ function init_calendar(date) {
             }
             // If this date has any events, style it with .event-date
             if(events.length!==0) {
-                console.log(events)
+                //console.log(events)
                 curr_date.addClass("event-date");
             }
             // Set onClick handler for clicking a date
@@ -350,7 +350,7 @@ function post_dayoff(url,event) {
          'X-CSRFTOKEN' : csrf_token
        },
        success: function (data) {
-            console.log(data)
+            //console.log(data)
             for(var jsondata of data){
                 var date = new Date(jsondata.fields.date)
                 new_event_json(jsondata.pk, jsondata.fields.type,
