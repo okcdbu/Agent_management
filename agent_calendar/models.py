@@ -16,3 +16,9 @@ class Roulette(models.Model):
     date = models.DateField(auto_now_add=True)
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner', db_column='winner')
 
+
+class Duty(models.Model):
+    name = models.ForeignKey(User, on_delete=models.CASCADE, related_name='duty', db_column='name')
+    date = models.DateField(null=True)
+
+

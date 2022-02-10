@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Dayoff,Roulette
+from .models import *
 from accounts.models import User
 from django.core import serializers
 from django.http import HttpResponse
@@ -13,12 +13,8 @@ import json
 
 def index(request):
     result = Roulette.objects.filter(date=date.today())
-    isduty = False
-    duty = ''
-    if result.filter(name='당직').first():
-        isduty = True
-        duty = result.filter(name='당직').first().winner.username
-    return render(request, 'agent_calendar/index.html', context={'result': result, 'isduty': isduty, 'duty': duty})
+    duty = Duty.objects.filter(date=date.today()).last()
+    return render(request, 'agent_calendar/index.html', context={'result': result, 'duty': duty})
 
 
 def roulette(request):

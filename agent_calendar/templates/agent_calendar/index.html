@@ -51,6 +51,9 @@
                     <details>
                         <summary>오늘의 룰렛 결과</summary>
                         <ul class="list-group">
+                            {% if duty %}
+                                <li class="list-group-item">오늘의 당직 : {{ duty.name }}</li>
+                            {% endif %}
                             {% for values in result %}
                                 <li class="list-group-item">오늘의 {{ values.name }} : {{ values.winner }}</li>
                             {% endfor %}
