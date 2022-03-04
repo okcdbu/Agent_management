@@ -17,6 +17,14 @@ def index(request):
     return render(request, 'agent_calendar/index.html', context={'result': result, 'duty': duty})
 
 
+def info(request):
+    current_user = User.objects.filter(username=request.user.username)
+    userdata = serializers.serialize('json', current_user, fields=("callup_date", "discharge_date", "username"))
+    dayoff_user = Dayoff.objects.filter(username=request.user.id)
+    dayoffdata = serializers.serialize('json', dayoff_user, use_natural_foreign_keys=True)
+    return render(request, 'userinfo/info.html', context={'curuser': userdata, 'dayoff': dayoffdata})
+
+
 def roulette(request):
     if request.method == 'GET':
         roulettetype = request.GET.get('type', '')

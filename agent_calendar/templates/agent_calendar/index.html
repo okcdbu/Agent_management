@@ -25,7 +25,7 @@
             <div class="row justify-content-end small">
                 <div class="col-xs-1 justify-content-end">
                     {% if user.is_authenticated %}
-                    <a href="">{{ user.username }}</a> |
+                    <a href="{% url 'info' %}">{{ user.username }}</a> |
                     <a href="javascript:{document.getElementById('logout').submit()}">로그아웃</a>
                     <form id="logout" method="POST" action="{% url 'logout' %}">
                         {% csrf_token %}
