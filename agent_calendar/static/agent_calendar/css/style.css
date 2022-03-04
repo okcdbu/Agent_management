@@ -8429,6 +8429,11 @@ h1, h2, h3, h4, h5,
     content: '';
     background: #28a745; }
 
+.holiday-date {
+  border-color: #ff3333;
+  background: #ff3333;
+  color: #fff;  }
+
 .active-date {
   background: #cd4dcc;
   color: #fff; }

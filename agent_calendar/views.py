@@ -78,6 +78,5 @@ class DayoffView(View):
     def delete(self, request):
         deldata = json.loads(request.body)
         dayoff = get_object_or_404(Dayoff, pk=deldata['id'])
-        dayoff.cancelled = True
-        dayoff.save()
+        dayoff.delete()
         return HttpResponse(status=200)

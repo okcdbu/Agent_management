@@ -14,13 +14,14 @@ $(document).ready(function(){
     $(".months-row").children().eq(date.getMonth()).addClass("active-month");
     // Get Data from DB
     get_dayoff(url_to_Dayoff);
+    get_holidays(url_to_Holidays)
     init_calendar(date);
     var events = check_events(today, date.getMonth()+1, date.getFullYear());
-    show_events(events, months[date.getMonth()], today);
+    var holidays = check_holidays(today,date.getMonth()+1, date.getFullYear())
+    show_events(events,holidays, months[date.getMonth()], today);
     // Modal Button settings
     $("#modify").click(modalchange);
     $("#cancel").click(modaldelete);
-
 });
 
 // Initialize the calendar by appending the HTML dates
@@ -55,17 +56,27 @@ function init_calendar(date) {
         else {
             var curr_date = $("<td class='table-date'>"+day+"</td>");
             var events = check_events(day, month+1, year);
+            var holidays = check_holidays(day,month + 1,year)
             if(today===day && $(".active-date").length===0) {
                 curr_date.addClass("active-date");
-                show_events(events, months[month], day);
+                if(holidays.length !== 0){
+                    $("#add-button").attr('disabled', true)
+                }
+                else{
+                    $("#add-button").attr('disabled', false)
+                }
+                show_events(events, holidays, months[month], day);
             }
             // If this date has any events, style it with .event-date
             if(events.length!==0) {
-                //console.log(events)
+
                 curr_date.addClass("event-date");
             }
+            if(holidays.length!==0) {
+                curr_date.addClass("holiday-date")
+            }
             // Set onClick handler for clicking a date
-            curr_date.click({events: events, month: months[month], day:day}, date_click);
+            curr_date.click({events: events,holidays: holidays, month: months[month], day:day}, date_click);
             row.append(curr_date);
         }
     }
@@ -87,7 +98,13 @@ function date_click(event) {
     $("#dialog").hide(250);
     $(".active-date").removeClass("active-date");
     $(this).addClass("active-date");
-    show_events(event.data.events, event.data.month, event.data.day);
+    if(event.data.holidays.length !== 0){
+        $("#add-button").attr('disabled', true)
+    }
+    else{
+        $("#add-button").attr('disabled', false)
+    }
+    show_events(event.data.events, event.data.holidays, event.data.month, event.data.day);
 };
 
 // Event handler for when a month is clicked
@@ -155,7 +172,7 @@ function new_event(event) {
         }
         else {
             $("#dialog").hide(250);
-            console.log("new event",username);
+
             date.setDate(day);
             post_dayoff(url_to_Dayoff,{
                 "type": type,
@@ -170,7 +187,7 @@ function new_event(event) {
 }
 
 // Adds a json event to event_data
-function new_event_json(id, type, content, daytype, username, date, cancelled = false) {
+function new_event_json(id, type, content, daytype, username, date) {
     var event = {
         "id" : id,
         "type": type,
@@ -180,23 +197,40 @@ function new_event_json(id, type, content, daytype, username, date, cancelled = 
         "year": date.getFullYear(),
         "month": date.getMonth()+1,
         "day": date.getDate(),
-        "cancelled" : cancelled,
     };
     event_data["events"].push(event);
 }
 
+function holiday_data_json(title,date) {
+    var event = {
+        "title" : title,
+        "year": date.getFullYear(),
+        "month": date.getMonth()+1,
+        "day": date.getDate(),
+    }
+    event_data["holidays"].push(event);
+}
+
 // Display all events of the selected date in card views
-function show_events(events, month, day) {
+function show_events(events, holidays, month, day) {
     // Clear the dates container
     $(".events-container").empty();
     $(".events-container").show(250);
     // If there are no events for this date, notify the user
-    if(events.length===0) {
+    if(events.length===0 && holidays.length ===0) {
         var event_card = $("<div class='event-card text-center'></div>");
         var event_name = $("<div class='event-name'>"+month+" "+day+"일 에는 예정된 일정이 없습니다.</div>");
         $(event_card).css({ "border-left": "10px solid #FF1744" });
         $(event_card).append(event_name);
         $(".events-container").append(event_card);
+    }
+    else if(events.length ===0){
+        var event_card = $("<div class='event-card text-center'></div>");
+        var event_name = $("<div class='event-name'>" + holidays[0]["title"]+ "</div>");
+        $(event_card).css({ "border-left": "10px solid #FF1744" });
+        $(event_card).append(event_name);
+        $(".events-container").append(event_card);
+
     }
     else {
         // Go through and add each event as a card to the events container
@@ -215,13 +249,13 @@ function show_events(events, month, day) {
                 modalfooterDisplay(username);
                 $("#modalBox").modal("show")
             })
-            if(events[i]["cancelled"]===true) {
-                $(event_card).css({
-                    "border-left": "10px solid #FF1744"
-                });
-                var event_cancelled = $("<div class='event-cancelled'>Cancelled</div>");
-                $(event_name).append(event_cancelled)
-            }
+            // if(events[i]["cancelled"]===true) {
+            //     $(event_card).css({
+            //         "border-left": "10px solid #FF1744"
+            //     });
+            //     var event_cancelled = $("<div class='event-cancelled'>Cancelled</div>");
+            //     $(event_name).append(event_cancelled)
+            // }
             $(event_card).append(event_name);
             $(".events-container").append(event_card);
         }
@@ -242,6 +276,18 @@ function check_events(day, month, year) {
     return events;
 }
 
+function check_holidays(day,month,year) {
+    var events = [];
+    for(var i=0; i<event_data["holidays"].length; i++) {
+        var event = event_data["holidays"][i];
+        if(event["day"]===day &&
+            event["month"]===month &&
+            event["year"]===year) {
+                events.push(event);
+            }
+    }
+    return events;
+}
 // Need to modify and add listener to #modify
 function modalchange() {
     var data = $(".modal-content").data("event");
@@ -265,7 +311,7 @@ function modalchange() {
         }
         else {
             $("#dialog").hide(250);
-            console.log("change event",date);
+
             put_dayoff(url_to_Dayoff,{
                 "id" : id,
                 "type": type,
@@ -286,7 +332,6 @@ function modaldelete() {
             "id" : data['id']
         });
         var today = new Date(data['year'],data['month']-1,data['day']);
-        console.log(today)
         init_calendar(today)
     }
     else return false;
@@ -319,18 +364,10 @@ function get_dayoff(url) {
         dataType: 'json',
         async: false,
         success: function (data) {
-            console.log(data)
             for(var jsondata of data){
                 var date = new Date(jsondata.fields.date)
-                if(jsondata.fields.cancelled){
-                    new_event_json(jsondata.pk, jsondata.fields.type,
-                    jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date,jsondata.fields.cancelled)
-                }
-                else{
-                    new_event_json(jsondata.pk, jsondata.fields.type,
-                    jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date)
-                }
-
+                new_event_json(jsondata.pk, jsondata.fields.type,
+                jsondata.fields.content,jsondata.fields.daytype,jsondata.fields.username[0],date)
             }
         },
         error: function (request,status,error) {
@@ -374,7 +411,6 @@ function put_dayoff(url,event) {
          'X-CSRFTOKEN' : csrf_token
        },
        success: function (data) {
-            console.log(event)
            var idx = event_data['events'].findIndex((eventdata) => eventdata.id === event.id )
            event_data['events'][idx].type = event.type;
            event_data['events'][idx].daytype = event.daytype;
@@ -397,16 +433,36 @@ function delete_dayoff(url,event) {
        },
        success: function () {
            var idx = event_data['events'].findIndex((eventdata) => eventdata.id === event.id )
-           event_data['events'][idx].cancelled = true;
+           event_data['events'].splice(idx,1)
        },
        error: function (request,status,error) {
             console.log(error)
        }
     });
 }
+
+function get_holidays(url) {
+    $.ajax({
+        url : url,
+        type : 'GET',
+        async : false,
+        success: function (data) {
+            for(var i in data){
+                holiday_data_json(data[i].title,new Date(data[i].start))
+            }
+        },
+        error: function (request,status,error) {
+            console.log(error)
+        }
+    })
+}
+
 // Given data for events in JSON format
 var event_data = {
     "events": [
+
+    ],
+    "holidays" : [
 
     ]
 };

@@ -158,7 +158,9 @@ function paymentCalculator(date, rank) {
     var mddate = new Date(dayoffmodel[i]['fields']['date'])
     if(mddate.getMonth() === date.getMonth()
         && mddate.getFullYear() === date.getFullYear()){
-      transcostcnt++
+      if(dayoffmodel[i]['fields']['daytype'] === 'allday'){
+        transcostcnt++
+      }
       if(dayoffmodel[i]['fields']['daytype'] !== 'PM'){
         lunchcnt++
       }
@@ -191,12 +193,10 @@ function paymentCalculator(date, rank) {
   var lunchpay = 7000 * (days - lunchcnt)
   var transpay = 2600 * (days - transcostcnt)
   var data = '￦' + (basic + lunchpay + transpay)
-  console.log(days,basic,lunchcnt,transpay, data)
   $('#balance').text(data)
 }
 function clickEventHandler(calendar) {
   $("button.fc-prev-button").click(function() {
-    console.log(calendar.getDate())
     var rank = rankCalculator(usermodel[0].fields.callup_date, usermodel[0].fields.discharge_date,calendar.getDate())
     var date = calendar.getDate()
     paymentCalculator(date,rank)
