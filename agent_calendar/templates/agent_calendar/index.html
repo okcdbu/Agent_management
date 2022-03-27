@@ -20,6 +20,7 @@
         var csrf_token = '{{ csrf_token }}';
         var url_to_Dayoff = '{% url 'dayoff' %}';
         var url_to_Holidays = '{% static 'agent_calendar/file/holiday.json'%}'
+        var menu = '{{ diet }}';
     </script>
 	<section class="ftco-section">
 		<div class="container">
@@ -50,11 +51,11 @@
                         </div>
                     </div>
                     <details>
-                        <summary>오늘의 룰렛 결과</summary>
+                        <summary>오늘의 알림</summary>
                         <ul class="list-group">
-                            {% if duty %}
-                                <li class="list-group-item">오늘의 당직 : {{ duty.name }}</li>
-                            {% endif %}
+                            {% for menu in diet %}
+                                <li class="list-group-item">오늘의 메뉴 : {{ menu.menu }}</li>
+                            {% endfor %}
                             {% for values in result %}
                                 <li class="list-group-item">오늘의 {{ values.name }} : {{ values.winner }}</li>
                             {% endfor %}

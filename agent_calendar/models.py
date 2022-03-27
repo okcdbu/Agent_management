@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from accounts.models import User
 
@@ -16,8 +18,17 @@ class Roulette(models.Model):
     winner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='winner', db_column='winner')
 
 
-class Duty(models.Model):
-    name = models.ForeignKey(User, on_delete=models.CASCADE, related_name='duty', db_column='name')
-    date = models.DateField(null=True)
+
+def fileConverter(instance, filename):
+    path = 'menu'
+    return '/'.join([path, instance.created_date.strftime('%Y/%m'), 'cuisine' + os.path.splitext(filename)[-1].lower()])
 
 
+class Menufile(models.Model):
+    created_date = models.DateField(null=False)
+    data = models.FileField(upload_to=fileConverter)
+
+
+class Menu(models.Model):
+    date = models.DateField(null=False)
+    menu = models.TextField()

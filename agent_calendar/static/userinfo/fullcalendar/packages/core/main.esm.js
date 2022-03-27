@@ -1849,7 +1849,7 @@ TODO: fix the terminology of "formatter" vs "formatting func"
 */
 /*
 At the time of instantiation, this object does not know which cmd-formatting system it will use.
-It receives this at the time of formatting, as a setting.
+It receives this at the time of formatting, as a settings.
 */
 var CmdFormatter = /** @class */ (function () {
     function CmdFormatter(cmdStr, separator) {
@@ -3634,7 +3634,7 @@ var PositionCache = /** @class */ (function () {
 }());
 
 /*
-An object for getting/setting scroll-related information for an element.
+An object for getting/settings scroll-related information for an element.
 Internally, this is done very differently for window versus DOM element,
 so this object serves as a common interface.
 */
@@ -4499,7 +4499,7 @@ var globalDefaults = {
     locale: '',
     // dir: will get this from the default locale
     // buttonIcons: null,
-    // allows setting a min-height to the event segment to prevent short events overlapping each other
+    // allows settings a min-height to the event segment to prevent short events overlapping each other
     timeGridEventMinHeight: 0,
     themeSystem: 'standard',
     // eventResizableFromStart: false,
@@ -7837,8 +7837,8 @@ var FgEventRenderer = /** @class */ (function () {
     // Compute the text that should be displayed on an event's element.
     // `range` can be the Event object itself, or something range-like, with at least a `start`.
     // If event times are disabled, or the event has no time, will return a blank string.
-    // If not specified, formatter will default to the eventTimeFormat setting,
-    // and displayEnd will default to the displayEventEnd setting.
+    // If not specified, formatter will default to the eventTimeFormat settings,
+    // and displayEnd will default to the displayEventEnd settings.
     FgEventRenderer.prototype.getTimeText = function (eventRange, formatter, displayEnd) {
         var def = eventRange.def, instance = eventRange.instance;
         return this._getTimeText(instance.range.start, def.hasEnd ? instance.range.end : null, def.allDay, formatter, displayEnd, instance.forcedStartTzo, instance.forcedEndTzo);

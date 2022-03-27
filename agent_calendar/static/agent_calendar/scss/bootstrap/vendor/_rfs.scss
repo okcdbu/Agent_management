@@ -35,7 +35,7 @@ $rfs-rem-value: 16 !default;
 // Safari iframe resize bug: https://github.com/twbs/rfs/issues/14
 $rfs-safari-iframe-resize-bug-fix: false !default;
 
-// Disable RFS by setting $enable-responsive-font-sizes to false
+// Disable RFS by settings $enable-responsive-font-sizes to false
 $enable-responsive-font-sizes: true !default;
 
 // Cache $rfs-base-font-size unit

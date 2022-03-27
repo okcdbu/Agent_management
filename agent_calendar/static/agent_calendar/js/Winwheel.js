@@ -137,7 +137,7 @@ function Winwheel(options, drawWheel)
     }
 
     // ------------------------------------------
-    // Call function to update the segment sizes setting the starting and ending angles.
+    // Call function to update the segment sizes settings the starting and ending angles.
     this.updateSegmentSizes();
 
     // If the text margin is null then set to same as font size as we want some by default.
@@ -226,7 +226,7 @@ function Winwheel(options, drawWheel)
     if (drawWheel == true) {
         this.draw(this.clearTheCanvas);
     } else if (this.drawMode == 'segmentImage') {
-        // If segment image then loop though all the segments and load the images for them setting a callback
+        // If segment image then loop though all the segments and load the images for them settings a callback
         // which will call the draw function of the wheel once all the images have been loaded.
         winwheelToDrawDuringAnimation = this;
         winhweelAlreadyDrawn = false;
@@ -2086,7 +2086,7 @@ function Segment(options)
 }
 
 // ====================================================================================================================
-// Changes an image for a segment by setting a callback to render the wheel once the image has loaded.
+// Changes an image for a segment by settings a callback to render the wheel once the image has loaded.
 // ====================================================================================================================
 Segment.prototype.changeImage = function(image, imageDirection)
 {

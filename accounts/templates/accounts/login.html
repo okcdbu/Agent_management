@@ -55,7 +55,9 @@
                 </label>
                 <span class="ml-auto"><a href="" class="forgot-pass" onclick="alert('관리자에게 문의하세요.');" >Forgot Password</a></span>
               </div>
-
+              {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message.message }}</div>
+              {% endfor %}
               <input type="submit" value="Log In" class="btn btn-block btn-primary">
 
               <!--<span class="d-block text-left my-4 text-muted">&mdash; or login with &mdash;</span>

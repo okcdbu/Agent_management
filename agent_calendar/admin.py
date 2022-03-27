@@ -4,4 +4,5 @@ from agent_calendar.models import *
 
 admin.site.register(Dayoff)
 admin.site.register(Roulette)
-admin.site.register(Duty)
+admin.site.register(Menu)
+admin.site.register(Menufile)

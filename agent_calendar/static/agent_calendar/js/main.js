@@ -62,7 +62,7 @@ function init_calendar(date) {
                 if(holidays.length !== 0){
                     $("#add-button").attr('disabled', true)
                 }
-                else{
+                else if(username){
                     $("#add-button").attr('disabled', false)
                 }
                 show_events(events, holidays, months[month], day);
@@ -98,10 +98,11 @@ function date_click(event) {
     $("#dialog").hide(250);
     $(".active-date").removeClass("active-date");
     $(this).addClass("active-date");
+    console.log(event.data.day)
     if(event.data.holidays.length !== 0){
         $("#add-button").attr('disabled', true)
     }
-    else{
+    else if(username){
         $("#add-button").attr('disabled', false)
     }
     show_events(event.data.events, event.data.holidays, event.data.month, event.data.day);
@@ -179,7 +180,7 @@ function new_event(event) {
                 "daytype": daytype,
                 "content": content,
                 "username": username1,
-                "date": date.toISOString().substring(0,10),
+                "date": new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substring(0,10),
             });
             init_calendar(date);
         }

@@ -1100,7 +1100,7 @@ var TimeGridView = /** @class */ (function (_super) {
         // make all axis cells line up
         this.axisWidth = matchCellWidths(findElements(this.el, '.fc-axis'));
         // hack to give the view some height prior to timeGrid's columns being rendered
-        // TODO: separate setting height from scroller VS timeGrid.
+        // TODO: separate settings height from scroller VS timeGrid.
         if (!this.timeGrid.colEls) {
             if (!isAuto) {
                 scrollerHeight = this.computeScrollerHeight(viewHeight);
@@ -1175,7 +1175,7 @@ var TimeGridView = /** @class */ (function (_super) {
             this.scroller.setScrollTop(scroll.top);
         }
     };
-    // Generates an HTML attribute string for setting the width of the axis, if it is known
+    // Generates an HTML attribute string for settings the width of the axis, if it is known
     TimeGridView.prototype.axisStyleAttr = function () {
         if (this.axisWidth != null) {
             return 'style="width:' + this.axisWidth + 'px"';

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib import auth
+from django.contrib import auth, messages
 from accounts.models import User
+
 
 # Create your views here.
 
@@ -17,7 +18,8 @@ def signup(request):
             callup_date = request.POST['callupdate']
             discharge_date = request.POST['dischargedate']
             if User.objects.all().filter(username=username).exists():
-                return render(request, 'accounts/signup.html', {'error': 'User is already exists.'})
+                messages.error(request, '이미 존재하는 사용자입니다.')
+                return render(request, 'accounts/signup.html')
             else:
                 user = User.objects.create_user(username=username, password=password, email=email,
                                                 callup_date=callup_date, discharge_date=discharge_date)
@@ -47,8 +49,9 @@ def login(request):
             return redirect('/')
         # 존재하지 않는다면
         else:
+            messages.error(request, '사용자 정보가 정확하지 않습니다.')
             # 딕셔너리에 에러메세지를 전달하고 다시 login.html 화면으로 돌아간다.
-            return render(request, 'accounts/login.html', {'error': 'username or password is incorrect.'})
+            return render(request, 'accounts/login.html')
     # login으로 GET 요청이 들어왔을때, 로그인 화면을 띄워준다.
     else:
         return render(request, 'accounts/login.html')
@@ -68,4 +71,3 @@ def logout(request):
 # 개인정보제공
 def privacy_policy(request):
     return render(request, 'accounts/PrivacyPolicy.html')
-

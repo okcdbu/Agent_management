@@ -1388,7 +1388,7 @@ var DayGridView = /** @class */ (function (_super) {
             '</tbody>' +
             '</table>';
     };
-    // Generates an HTML attribute string for setting the width of the week number column, if it is known
+    // Generates an HTML attribute string for settings the width of the week number column, if it is known
     DayGridView.prototype.weekNumberStyleAttr = function () {
         if (this.weekNumberWidth != null) {
             return 'style="width:' + this.weekNumberWidth + 'px"';
@@ -1414,7 +1414,7 @@ var DayGridView = /** @class */ (function (_super) {
         var scrollerHeight;
         var scrollbarWidths;
         // hack to give the view some height prior to dayGrid's columns being rendered
-        // TODO: separate setting height from scroller VS dayGrid.
+        // TODO: separate settings height from scroller VS dayGrid.
         if (!dayGrid.rowEls) {
             if (!isAuto) {
                 scrollerHeight = this.computeScrollerHeight(viewHeight);

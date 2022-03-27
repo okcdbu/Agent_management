@@ -13,8 +13,8 @@ import json
 
 def index(request):
     result = Roulette.objects.filter(date=date.today())
-    duty = Duty.objects.filter(date=date.today()).last()
-    return render(request, 'agent_calendar/index.html', context={'result': result, 'duty': duty})
+    menu = Menu.objects.filter(date=date.today())
+    return render(request, 'agent_calendar/index.html', context={'result': result, 'diet': menu})
 
 
 def info(request):
@@ -29,7 +29,7 @@ def roulette(request):
     if request.method == 'GET':
         roulettetype = request.GET.get('type', '')
         users = User.objects.all().values('username')
-        dayoffusers = Dayoff.objects.filter(date=date.today(), cancelled=False).exclude(daytype='PM').values(
+        dayoffusers = Dayoff.objects.filter(date=date.today()).exclude(daytype='PM').values(
             'username__username')
         data = dict()
         for user in users:
